@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  basePath: '/tools-web',
-}
+  basePath: "/tools-web",
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

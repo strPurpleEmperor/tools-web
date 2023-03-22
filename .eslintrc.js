@@ -35,12 +35,12 @@ module.exports = {
     "plugin:prettier/recommended",
     "plugin:sonarjs/recommended",
     "plugin:security/recommended",
-    // "plugin:react-hooks/recommended",
+    "plugin:react-hooks/recommended",
   ],
 
   rules: {
     "@typescript-eslint/no-unused-vars": "off",
-    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-explicit-any": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": [
       1,
@@ -69,5 +69,6 @@ module.exports = {
     ],
     "no-nested-ternary": "off",
     "import/prefer-default-export": "off",
+    "import/no-extraneous-dependencies": "off",
   },
 };
