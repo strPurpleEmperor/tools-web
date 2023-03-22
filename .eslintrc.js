@@ -70,5 +70,11 @@ module.exports = {
     "no-nested-ternary": "off",
     "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": "off",
+    "no-plusplus": "off",
+    "security/detect-object-injection": "off",
+    "no-console": "off",
+    "consistent-return": "off",
+    "no-void": "off",
+    "no-shadow": "off",
   },
 };

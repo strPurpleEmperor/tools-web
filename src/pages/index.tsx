@@ -5,6 +5,8 @@ import xlsx from "node-xlsx";
 import styles from "@/styles/index.module.css";
 import { createReport } from "docx-templates";
 import FileSaver from "file-saver";
+import JSZip from "jszip";
+import { getFileType } from "@/utils";
 
 export default function Home() {
   const [word, setWord] = useState<ArrayBuffer>(new ArrayBuffer(0));
@@ -58,17 +60,44 @@ export default function Home() {
       </div>
       <Button
         onClick={async () => {
-          const b = await createReport({
-            template: Buffer.from(word),
-            cmdDelimiter: ["{", "}"],
-            data: (...arg) => {
-              console.log(arg);
-              return "1";
-            },
-            failFast: false,
+          const jsZip = new JSZip();
+          const excelData = JSON.parse(JSON.stringify(excel[0].data || []));
+          const keys: string[] = excelData.shift();
+          const values: any[][] = excelData;
+          const p: any[] = [];
+          const nameMap: Record<string, number> = {};
+          values.forEach((v) => {
+            const data: Record<string, any> = {};
+            keys.forEach((k, index) => {
+              data[k] = v[index] || 0;
+            });
+            const buf = createReport({
+              template: Buffer.from(word),
+              cmdDelimiter: ["{", "}"],
+              data,
+            });
+            let name = fileName.replace(/{([\W\w]+)}/g, function (match, $1) {
+              return data[$1];
+            });
+            if (nameMap[name] !== void 0) {
+              nameMap[name]++;
+              const [oName, fileType] = getFileType(name);
+              name = `${oName}(${nameMap[name]})${fileType}`;
+            } else {
+              nameMap[name] = 0;
+            }
+            p.push({ buf, name });
           });
-          console.log(b);
-          FileSaver.saveAs(new Blob(b), fileName);
+          p.forEach((p) => {
+            jsZip.file(p.name, p.buf, {
+              binary: true,
+            });
+          });
+          const rename = new Date().toString();
+          jsZip.generateAsync({ type: "blob" }).then((content) => {
+            // 生成二进制流
+            FileSaver.saveAs(content, rename); // 利用file-saver保存文件  自定义文件名
+          });
         }}
       >
         按钮
