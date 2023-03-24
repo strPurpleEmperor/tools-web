@@ -75,6 +75,8 @@ module.exports = {
     "no-console": "off",
     "consistent-return": "off",
     "no-void": "off",
+    "no-underscore-dangle": "off",
     "no-shadow": "off",
+    "react/jsx-no-bind": "off",
   },
 };
