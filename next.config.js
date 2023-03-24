@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  basePath: "/tools-web",
+  swcMinify: true,
+  assetPrefix: "./",
 };
 
 module.exports = nextConfig;
