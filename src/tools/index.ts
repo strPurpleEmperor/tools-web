@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { Rule } from "@/types";
 
 export function getFileType(v: string): [string, string] {
   const arr = v.split(".");

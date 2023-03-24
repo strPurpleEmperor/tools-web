@@ -78,5 +78,6 @@ module.exports = {
     "no-underscore-dangle": "off",
     "no-shadow": "off",
     "react/jsx-no-bind": "off",
+    "no-unused-vars": "off",
   },
 };

@@ -19,7 +19,6 @@ import JSZip from "jszip";
 import xlsx from "node-xlsx";
 import React, { useEffect, useState } from "react";
 
-import mergeDemo from "@/assets/merge_demo.png";
 import { getFileType, RULES } from "@/tools";
 import { Rule } from "@/types";
 
@@ -223,7 +222,7 @@ function Merge() {
       </Card>
       <p />
       <Card title="替换规则说明">
-        <Image src={mergeDemo} />
+        <Image src="./merge_demo.png" />
         <p style={{ fontWeight: "bold", fontSize: 18 }}>说明：</p>
         <p>
           {
