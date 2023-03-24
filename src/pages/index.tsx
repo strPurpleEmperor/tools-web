@@ -30,6 +30,7 @@ function Merge() {
   const [modalForm] = Form.useForm();
   const [word, setWord] = useState<ArrayBuffer>(new ArrayBuffer(0));
   const [excel, setExcel] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [fileName, setFileName] = useState<string>("");
   const [keys, setKeys] = useState<string[]>([]);
   const [secureKeys, setSegueKeys] = useState<string[]>([]);
@@ -46,6 +47,7 @@ function Merge() {
   }, [keys, formatRule]);
   function mergeFile() {
     if (!excel.length || !word) return message.info("请先上传文件");
+    setLoading(true);
     const jsZip = new JSZip();
     const excelData = JSON.parse(JSON.stringify(excel[0].data || []));
     const keys: string[] = excelData.shift();
@@ -57,27 +59,33 @@ function Merge() {
       formatMap[f.name] = f.rule;
     });
     values.forEach((v) => {
-      const data: Record<string, any> = {};
-      keys.forEach((k, index) => {
-        const val = v[index];
-        data[k] = formatMap[k] ? formatMap[k].rule(val) : val;
-      });
-      const buf = createReport({
-        template: Buffer.from(word),
-        cmdDelimiter: ["{", "}"],
-        data,
-      });
-      let name = fileName.replace(/{([\W\w]+)}/g, function (match, $1) {
-        return data[$1];
-      });
-      if (nameMap[name] !== void 0) {
-        nameMap[name]++;
-        const [oName, fileType] = getFileType(name);
-        name = `${oName}(${nameMap[name]})${fileType}`;
-      } else {
-        nameMap[name] = 0;
+      if (v.length === keys.length) {
+        const data: Record<string, any> = {};
+        keys.forEach((k, index) => {
+          const val = v[index];
+          data[k] = formatMap[k] ? formatMap[k].rule(val) : val;
+          if (data[k] === void 0) data[k] = "";
+        });
+        const buf = createReport({
+          template: Buffer.from(word),
+          cmdDelimiter: ["{", "}"],
+          data,
+          errorHandler: (e) => {
+            console.log(e);
+          },
+        });
+        let name = fileName.replace(/{([\W\w]+)}/g, function f(match, $1) {
+          return data[$1];
+        });
+        if (nameMap[name] !== void 0) {
+          nameMap[name]++;
+          const [oName, fileType] = getFileType(name);
+          name = `${oName}(${nameMap[name]})${fileType}`;
+        } else {
+          nameMap[name] = 0;
+        }
+        p.push({ buf, name });
       }
-      p.push({ buf, name });
     });
     p.forEach((p) => {
       jsZip.file(p.name, p.buf, {
@@ -89,6 +97,7 @@ function Merge() {
       // 生成二进制流
       FileSaver.saveAs(content, rename); // 利用file-saver保存文件  自定义文件名
     });
+    setLoading(false);
   }
   function addRule() {
     Modal.confirm({
@@ -176,6 +185,7 @@ function Merge() {
             const buffer =
               (await info.fileList[0].originFileObj?.arrayBuffer()) as ArrayBuffer;
             setExcel(xlsx.parse(buffer));
+            setFormatRule([]);
           }}
         >
           <p className="ant-upload-drag-icon">
@@ -208,7 +218,7 @@ function Merge() {
         title="文件名替换规则"
         extra={
           <Space>
-            <Button onClick={mergeFile} type="primary">
+            <Button loading={loading} onClick={mergeFile} type="primary">
               生成文件
             </Button>
           </Space>

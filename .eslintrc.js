@@ -79,5 +79,6 @@ module.exports = {
     "no-shadow": "off",
     "react/jsx-no-bind": "off",
     "no-unused-vars": "off",
+    "sonarjs/cognitive-complexity": "off",
   },
 };

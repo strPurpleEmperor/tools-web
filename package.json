@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "cross-env BASE_PATH=/tools-web next dev",
+    "build": "cross-env BASE_PATH=/tools-web next build",
     "start": "next start",
     "lint": "next lint",
-    "static": "next build && next export"
+    "static": "cross-env BASE_URL=./ next build && next export"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
@@ -32,6 +32,7 @@
     "@types/file-saver": "^2.0.5",
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
+    "cross-env": "^7.0.3",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",
