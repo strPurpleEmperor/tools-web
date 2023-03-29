@@ -13,9 +13,9 @@ import {
   Space,
   Upload,
 } from "antd";
-import { createReport } from "docx-templates";
 import FileSaver from "file-saver";
 import JSZip from "jszip";
+import { TemplateHandler } from "easy-template-x";
 import xlsx from "node-xlsx";
 import React, { useEffect, useState } from "react";
 
@@ -67,14 +67,10 @@ function Merge() {
       });
       const notVoid = isNotVoidObj(data);
       if (notVoid) {
-        const buf = createReport({
-          template: Buffer.from(word),
-          cmdDelimiter: ["{", "}"],
-          data: void2empty(data),
-          errorHandler: (e) => {
-            console.log(e);
-          },
-        });
+        const buf = new TemplateHandler().process(
+          Buffer.from(word),
+          void2empty(data)
+        );
         let name = fileName.replace(/{([\W\w]+)}/g, function f(match, $1) {
           return data[$1];
         });
@@ -248,20 +244,15 @@ function Merge() {
         <p>条件判断：</p>
         <p>
           {
-            '{IF 条件}条件符合会展示的东西{END-IF}。"{IF 条件}"是条件开始(IF和条件之间要有一个空格)；"{END-IF}"是条件结束'
+            '{#条件}条件符合会展示的东西{/}。"{#条件}"是条件开始；"{/}"是条件结束'
           }
         </p>
         <p>条件判断--并且：</p>
         <p>
           {
-            '{IF 条件1 && 条件2 && 条件3}条件符合会展示的东西{END-IF}。"&&"是and，并且的意思，满足所有条件'
+            "{#条件1}{#条件2}{#条件3}条件123都符合才会展示{/}{/}{/}。--每个条件开始都要有对应的条件结束"
           }
         </p>
-        <p>其他条件判断：</p>
-        <p>{"条件1||条件2 -> 条件1或者条件2"}</p>
-        <p>{"!条件 -> 非该条件"}</p>
-        <p>{"条件 > 10 -> 条件大于10的时候"}</p>
-        <p>{"条件 >= 10 -> 条件大于10的时候"}</p>
       </Card>
     </div>
   );

@@ -36,7 +36,7 @@ export const RULES: Rule[] = [
   {
     ruleName: "保留两位小数（千分位表示）",
     rule: (val: number) => {
-      if (val) return Number(val.toFixed(2)).toLocaleString();
+      if (val) return Number(val.toLocaleString()).toFixed(2);
       return val;
     },
   },
