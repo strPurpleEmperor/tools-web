@@ -36,7 +36,11 @@ export const RULES: Rule[] = [
   {
     ruleName: "保留两位小数（千分位表示）",
     rule: (val: number) => {
-      if (val) return Number(val.toLocaleString()).toFixed(2);
+      if (val)
+        return val.toLocaleString(void 0, {
+          maximumFractionDigits: 2,
+          minimumFractionDigits: 2,
+        });
       return val;
     },
   },
